@@ -10,18 +10,6 @@
   "main": "index.js",
   "types": "index.d.ts",
   "author": "Long Ho <holevietlong@gmail.com>",
-  "dependencies": {
-    "@babel/core": "^7.10.4",
-    "@babel/helper-plugin-utils": "^7.10.4",
-    "@babel/plugin-syntax-jsx": "7",
-    "@babel/traverse": "7",
-    "@babel/types": "^7.12.11",
-    "@formatjs/icu-messageformat-parser": "2.0.15",
-    "@formatjs/ts-transformer": "3.7.0",
-    "@types/babel__core": "^7.1.7",
-    "@types/babel__helper-plugin-utils": "^7.10.0",
-    "tslib": "^2.1.0"
-  },
   "keywords": [
     "babel-plugin",
     "react-intl"

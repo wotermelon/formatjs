@@ -1,5 +1,5 @@
 load("@build_bazel_rules_nodejs//:index.bzl", "generated_file_test", "pkg_npm")
-load("//tools:index.bzl", "check_format", "ts_compile")
+load("//tools:index.bzl", "check_format", "ts_compile", "populate_package_json_deps")
 load("//tools:jest.bzl", "jest_test")
 
 PACKAGE_NAME = "cli"
@@ -16,6 +16,7 @@ pkg_npm(
     deps = [
         "bin/formatjs",
         ":dist",
+        ":package.json"
     ],
 )
 
@@ -157,4 +158,9 @@ check_format(
             "tests/**/__snapshots__/*",
         ],
     ),
+)
+
+populate_package_json_deps(
+    name = "populate_package_json_deps",
+    deps = SRC_DEPS,
 )

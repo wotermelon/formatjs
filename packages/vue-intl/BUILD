@@ -1,5 +1,5 @@
 load("@build_bazel_rules_nodejs//:index.bzl", "pkg_npm")
-load("//tools:index.bzl", "check_format", "package_json_test", "ts_compile")
+load("//tools:index.bzl", "check_format", "populate_package_json_deps", "ts_compile")
 load("//tools:jest.bzl", "jest_test")
 
 exports_files(["package.json"])
@@ -13,7 +13,7 @@ pkg_npm(
         "LICENSE.md",
         "README.md",
     ],
-    deps = [":dist"],
+    deps = [":dist", ":package.json"],
 )
 
 alias(
@@ -71,7 +71,8 @@ check_format(
     ),
 )
 
-package_json_test(
-    name = "package_json_test",
+populate_package_json_deps(
+    name = "populate_package_json_deps",
     deps = SRC_DEPS,
+    peer_dependencies=["vue"]
 )

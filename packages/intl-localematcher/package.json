@@ -22,8 +22,5 @@
   },
   "bugs": {
     "url": "https://github.com/formatjs/formatjs/issues"
-  },
-  "dependencies": {
-    "tslib": "^2.1.0"
   }
 }

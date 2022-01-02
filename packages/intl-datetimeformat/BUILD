@@ -2,7 +2,7 @@ load("@build_bazel_rules_nodejs//:index.bzl", "generated_file_test", "pkg_npm")
 load("@com_github_ash2k_bazel_tools//multirun:def.bzl", "multirun")
 load("@npm//ts-node:index.bzl", "ts_node")
 load("//:index.bzl", "ZONES")
-load("//tools:index.bzl", "check_format", "esbuild", "generate_src_file", "package_json_test", "ts_compile", "ts_script")
+load("//tools:index.bzl", "check_format", "esbuild", "generate_src_file", "populate_package_json_deps", "ts_compile", "ts_script")
 load("//tools:jest.bzl", "jest_test")
 load("@com_github_ash2k_bazel_tools//multirun:def.bzl", "multirun")
 
@@ -341,8 +341,8 @@ ts_node(
     ],
 )
 
-package_json_test(
-    name = "package_json_test",
+populate_package_json_deps(
+    name = "populate_package_json_deps",
     deps = SRC_DEPS,
 )
 

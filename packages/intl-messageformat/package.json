@@ -30,12 +30,6 @@
   "main": "index.js",
   "module": "lib/index.js",
   "types": "index.d.ts",
-  "dependencies": {
-    "@formatjs/ecma402-abstract": "1.11.0",
-    "@formatjs/fast-memoize": "1.2.1",
-    "@formatjs/icu-messageformat-parser": "2.0.15",
-    "tslib": "^2.1.0"
-  },
   "sideEffects": false,
   "homepage": "https://github.com/formatjs/formatjs",
   "license": "BSD-3-Clause",

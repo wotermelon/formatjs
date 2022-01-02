@@ -289,35 +289,40 @@ def esbuild(name, **kwargs):
         **kwargs
     )
 
-def package_json_test(name, packageJson = "package.json", deps = []):
+def populate_package_json_deps(name, packageJson = "package.json", deps = [], peer_dependencies=[]):
     external_deps = [s.replace("@npm//", "") for s in deps if s.startswith("@npm//")]
     internal_dep_package_jsons = ["%s:package.json" % s.split(":")[0] for s in deps if not s.startswith("@npm//")]
-    ts_node_test(
+    native.genrule(
+        name="%s_package_json_copy" % name,
+        srcs=[packageJson],
+        outs=["raw_package.json"],
+        cmd="cp $< $@"
+    )
+    ts_node(
         name = name,
+        outs=["package.json"],
         args = [
                    "--transpile-only",
-                   "$(execpath //tools:check-package-json.ts)",
+                   "$(execpath //tools:populate-package-json-deps.ts)",
                    "--rootPackageJson",
                    "$(location //:package.json)",
+                   "--out",
+                   "$@",
                    "--packageJson",
-                   "$(location %s)" % packageJson,
+                   "$(location :raw_package.json)",
                ] +
+               ["--peerDependency %s" & n for n in peer_dependencies] +
                ["--externalDep %s" % n for n in external_deps] +
                ["--internalDepPackageJson $(location %s)" % d for d in internal_dep_package_jsons],
         data = internal_dep_package_jsons + [
-            packageJson,
-            "//tools:check-package-json.ts",
+            ":raw_package.json",
+            "//tools:populate-package-json-deps.ts",
             "//:package.json",
             "//:tsconfig.json",
             "@npm//@types/fs-extra",
             "@npm//@types/minimist",
             "@npm//fs-extra",
-            "@npm//json-stable-stringify",
-            "@npm//@types/json-stable-stringify",
             "@npm//minimist",
-            "@npm//lodash",
-            "@npm//@types/lodash",
-            "@npm//unidiff",
             "@npm//tslib",
             "//:tsconfig.node.json",
         ],

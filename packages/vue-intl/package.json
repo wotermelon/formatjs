@@ -16,12 +16,5 @@
     "formatjs"
   ],
   "author": "Long Ho <holevietlong@gmail.com>",
-  "dependencies": {
-    "@formatjs/intl": "1.18.0",
-    "tslib": "^2.1.0"
-  },
-  "peerDependencies": {
-    "vue": "3"
-  },
   "license": "ISC"
 }

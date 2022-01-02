@@ -114,7 +114,7 @@ http_server(
     ],
 )
 
-# package_json_test(
-#     name="package_json_test",
+# populate_package_json_deps(
+#     name="populate_package_json_deps",
 #     deps=SRC_DEPS
 # )

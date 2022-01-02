@@ -1,5 +1,5 @@
 load("@build_bazel_rules_nodejs//:index.bzl", "generated_file_test", "pkg_npm")
-load("//tools:index.bzl", "bundle_karma_tests", "check_format", "esbuild", "generate_src_file", "package_json_test", "ts_compile")
+load("//tools:index.bzl", "bundle_karma_tests", "check_format", "esbuild", "generate_src_file", "populate_package_json_deps", "ts_compile")
 load("//tools:jest.bzl", "jest_test")
 
 exports_files(["package.json"])
@@ -117,7 +117,8 @@ check_format(
     ),
 )
 
-package_json_test(
-    name = "package_json_test",
+populate_package_json_deps(
+    name = "populate_package_json_deps",
     deps = SRC_DEPS,
+    peer_dependencies=["@types/node"]
 )

@@ -1,22 +1,25 @@
-import {readJSONSync} from 'fs-extra'
+import {readJSONSync, writeJSONSync} from 'fs-extra'
 import minimist from 'minimist'
-import {isEqual} from 'lodash'
-import stringify from 'json-stable-stringify'
 const unidiff = require('unidiff')
 
 interface Args {
   packageJson: string
+  peerDependency: string[]
   rootPackageJson: string
   out: string
   internalDepPackageJson: string | string[]
   externalDep: string | string[]
 }
 
-const cmp: stringify.Comparator = (a, b) => (a.key < b.key ? 1 : -1)
-
 function main(args: Args) {
-  const {externalDep, internalDepPackageJson, packageJson, rootPackageJson} =
-    args
+  const {
+    externalDep,
+    internalDepPackageJson,
+    packageJson,
+    rootPackageJson,
+    peerDependency,
+    out,
+  } = args
   const externalDeps = Array.isArray(externalDep)
     ? externalDep
     : externalDep
@@ -26,6 +29,11 @@ function main(args: Args) {
     ? internalDepPackageJson
     : internalDepPackageJson
     ? [internalDepPackageJson]
+    : []
+  const peerDependencies = Array.isArray(peerDependency)
+    ? peerDependency
+    : peerDependency
+    ? [peerDependency]
     : []
   const packageJsonContent = readJSONSync(packageJson)
   const rootPackageJsonContent = readJSONSync(rootPackageJson)
@@ -44,31 +52,26 @@ function main(args: Args) {
       return all
     }, {}),
   }
-  const packageJsonAllDeps = {
-    ...packageJsonContent.dependencies,
-    ...(packageJsonContent.peerDependencies || {}),
+  if (packageJsonContent.dependencies) {
+    packageJsonContent.dependencies = Object.keys(
+      packageJsonContent.dependencies
+    )
+      .filter(dep => peerDependencies.includes(dep))
+      .reduce((all, dep) => {
+        all[dep] = expectedDependencies[dep]
+        return all
+      }, {})
   }
-  if (packageJsonContent.peerDependenciesMeta) {
-    for (const dep in packageJsonContent.peerDependenciesMeta) {
-      delete expectedDependencies[dep]
-      delete packageJsonAllDeps[dep]
-    }
-  }
-
-  if (isEqual(packageJsonAllDeps, expectedDependencies)) {
-    return
-  }
-
-  const diff = unidiff.diffLines(
-    stringify(packageJsonAllDeps, {space: 2, cmp}),
-    stringify(expectedDependencies, {space: 2, cmp})
+  packageJsonContent.peerDependencies = Object.keys(peerDependencies).reduce(
+    (all, dep) => {
+      all[dep] = expectedDependencies[dep]
+      return all
+    },
+    {}
   )
-  console.log(
-    'package.json dependencies versions differs from root package.json'
-  )
-  console.log(unidiff.formatLines(diff))
-
-  process.exit(1)
+  writeJSONSync(out, packageJsonContent, {
+    spaces: 2,
+  })
 }
 
 if (require.main === module) {
